@@ -1608,3 +1608,55 @@ input, textarea, select { font-family: inherit; }
     background: rgba(139, 233, 253, 0.2) !important;
 }
 
+/* ===================================================
+   LANDING PAGE VIEW
+   =================================================== */
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg-deep);
+}
+
+.landing-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem; background: rgba(8, 11, 20, 0.85);
+    backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+}
+
+.landing-brand { font-size: 1.8rem; font-weight: 800; }
+.landing-nav { display: flex; gap: 2rem; }
+.landing-nav .nav-link { font-weight: 500; color: var(--text-2); transition: var(--transition); }
+.landing-nav .nav-link:hover { color: var(--text-1); text-shadow: var(--shadow-glow-accent); }
+.landing-actions { display: flex; gap: 1rem; }
+
+.landing-hero {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; min-height: 70vh; padding: 4rem 2rem;
+    background: radial-gradient(circle at 50% 50%, rgba(139, 233, 253, 0.08) 0%, transparent 60%);
+    border-bottom: 1px solid var(--border);
+}
+.hero-content { max-width: 800px; animation: slideUp 0.6s ease-out; }
+.hero-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
+.hero-subtitle { font-size: 1.2rem; color: var(--text-2); margin-bottom: 2.5rem; }
+.btn-lg { padding: 14px 32px; font-size: 1.1rem; }
+
+.landing-preview { padding: 5rem 4rem; background: var(--bg-surface); }
+.landing-contact { display: flex; justify-content: center; padding: 5rem 2rem; }
+.contact-box { width: 100%; max-width: 500px; padding: 3rem; border-radius: var(--radius-lg); }
+
+.landing-footer {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 3rem 2rem; background: var(--bg-deep); border-top: 1px solid var(--border); gap: 1rem;
+}
+.footer-socials { display: flex; gap: 1.5rem; }
+.footer-socials a { color: var(--text-3); transition: var(--transition); }
+.footer-socials a:hover { color: var(--accent); transform: translateY(-3px); }
+.footer-credits { font-size: 0.9rem; color: var(--text-3); }
+
+@media (max-width: 768px) {
+    .landing-header { padding: 1rem 1.5rem; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    .landing-nav { display: none; }
+    .landing-preview { padding: 3rem 1.5rem; }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CineClassify - Tests en el Navegador</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #1e1e2e; color: #cdd6f4; }
+        .test-pass { color: #a6e3a1; font-weight: bold; }
+        .test-fail { color: #f38ba8; font-weight: bold; }
+        #results { background: #181825; padding: 20px; border-radius: 8px; }
+        #test-sandbox { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Pruebas Automáticas (Testing)</h1>
+    <div id="results">Ejecutando pruebas...</div>
+    
+    <!-- Contenedor oculto para pruebas de UI -->
+    <div id="test-sandbox">
+        <div id="root"></div>
+        <div id="cc-toast"></div>
+    </div>
+
+    <!-- Cargar la aplicación -->
+    <script src="app.js"></script>
+    
+    <!-- Script de pruebas -->
+    <script>
+        const resultsDiv = document.getElementById('results');
+        let passed = 0;
+        let failed = 0;
+        let log = '';
+
+        function assert(condition, message) {
+            if (condition) {
+                passed++;
+                log += `<div class="test-pass">✔️ PASS: ${message}</div>`;
+            } else {
+                failed++;
+                log += `<div class="test-fail">❌ FAIL: ${message}</div>`;
+                console.error("Test failed:", message);
+            }
+        }
+
+        function runTests() {
+            log += '<h3>1. Pruebas de Base de Datos y Modelos</h3>';
+            
+            // Limpiar localStorage para la prueba
+            localStorage.clear();
+            DB.init(); // Debería seedear la base de datos
+            
+            const users = DB.getAllUsers();
+            assert(users.length >= 2, 'Se inicializaron los usuarios por defecto (admin y demo)');
+            
+            const admin = DB.findUserByUsername('admin');
+            assert(admin !== null && admin.role === 'admin', 'El usuario admin existe y tiene el rol correcto');
+            
+            const media = DB.getAllMedia();
+            assert(media.length > 0, 'Se inicializaron las películas y series de prueba');
+
+            log += '<h3>2. Pruebas de Autenticación</h3>';
+            Auth.init();
+            assert(Auth.isAuth === false, 'El usuario no está autenticado al inicio');
+            
+            const loginFail = Auth.login('admin', 'wrongpassword');
+            assert(loginFail.error !== undefined, 'Falla el login con contraseña incorrecta');
+            
+            const loginSuccess = Auth.login('admin', 'admin123');
+            assert(!loginSuccess.error && Auth.isAuth && Auth.isAdmin, 'Login exitoso con credenciales correctas y rol admin');
+
+            log += '<h3>3. Pruebas de Controladores</h3>';
+            const catalog = MediaCtrl.catalog();
+            assert(catalog.data.length > 0, 'El catálogo devuelve datos');
+            
+            const movie = catalog.data[0];
+            const addedToWatchlist = MediaCtrl.toggleWatchlist(movie.id);
+            assert(addedToWatchlist.added === true, 'Se puede añadir una película a la watchlist');
+            assert(MediaCtrl.isInWatchlist(movie.id) === true, 'La película aparece en la watchlist');
+
+            log += '<h3>4. Pruebas de Renderizado UI (Básico)</h3>';
+            renderAuth();
+            const root = document.getElementById('root');
+            assert(root.innerHTML.includes('auth-form'), 'La vista de login se renderiza correctamente en el DOM');
+            
+            renderApp();
+            assert(root.innerHTML.includes('app-layout'), 'El layout principal de la app se renderiza tras hacer login');
+
+            // Mostrar resultados finales
+            log += `<h3>Resultados Finales</h3>`;
+            log += `<div>Total pruebas: ${passed + failed}</div>`;
+            log += `<div class="test-pass">Exitosas: ${passed}</div>`;
+            if (failed > 0) log += `<div class="test-fail">Fallidas: ${failed}</div>`;
+            
+            resultsDiv.innerHTML = log;
+        }
+
+        // Ejecutar las pruebas un segundo después de cargar para asegurar que todo esté listo
+        setTimeout(runTests, 500);
+    </script>
+</body>
+</html>
