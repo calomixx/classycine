@@ -22,11 +22,20 @@ export class Router {
     }
 
     _resolve() {
-        const hash  = window.location.hash.slice(1) || '/';
+        const hash = window.location.hash.slice(1) || '/';
         const [pathStr] = hash.split('?');
+
+        // Direct match for nested paths like /admin/media
+        if (this._routes[pathStr]) {
+            this._currentRoute = { route: pathStr, param: null };
+            this._routes[pathStr]();
+            return;
+        }
+
+        // Base path matching with param (e.g. /detail/:id)
         const parts = pathStr.split('/').filter(Boolean);
         const base  = '/' + (parts[0] || '');
-        const param = parts[1] || null;
+        const param = parts.slice(1).join('/') || null;
 
         if (this._routes[base]) {
             this._currentRoute = { route: base, param };

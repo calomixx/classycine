@@ -6,7 +6,7 @@ import { authController } from './controllers/AuthController.js';
 import { AuthView } from './views/AuthView.js';
 import { LayoutView } from './views/LayoutView.js';
 import { LandingView } from './views/LandingView.js';
-import { HomeView, CatalogView, DetailView, StatsView, TierListView, WatchlistView, AdminView } from './views/Views.js';
+import { HomeView, CatalogView, DetailView, StatsView, TierListView, WatchlistView, AdminView, TopRatedView } from './views/Views.js';
 
 function initApp() {
     const root = document.getElementById('root');
@@ -50,7 +50,7 @@ function initApp() {
     const homeView       = new HomeView();
     const movieCatalog   = new CatalogView('movie');
     const seriesCatalog  = new CatalogView('series');
-    const topView        = new CatalogView('all');
+    const topView        = new TopRatedView();
     const statsView      = new StatsView();
     const tierView       = new TierListView();
     const watchlistView  = new WatchlistView();
@@ -90,7 +90,7 @@ function initApp() {
             movieCatalog.render(c, q ? { query: q } : {});
         }))
         .on('/series',    requireAuth((c) => { layoutViewInstance.setActiveNav('/series'); seriesCatalog.render(c); }))
-        .on('/top',       requireAuth((c) => { layoutViewInstance.setActiveNav('/top'); topView.render(c, { sort: 'rating' }); }))
+        .on('/top',       requireAuth((c) => { layoutViewInstance.setActiveNav('/top'); topView.render(c); }))
         .on('/stats',     requireAuth((c) => { layoutViewInstance.setActiveNav('/stats'); statsView.render(c); }))
         .on('/watchlist', requireAuth((c) => { layoutViewInstance.setActiveNav('/watchlist'); watchlistView.render(c); }))
         .on('/tierlist',  requireAuth((c) => { layoutViewInstance.setActiveNav('/tierlist'); tierView.render(c); }))
