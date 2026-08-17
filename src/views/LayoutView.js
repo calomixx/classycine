@@ -5,8 +5,9 @@
  */
 
 import { authController } from '../controllers/AuthController.js';
+import { mediaController } from '../controllers/MediaController.js';
 import { router } from '../Router.js';
-import { getInitials } from '../helpers.js';
+import { getInitials, showToast } from '../helpers.js';
 
 export class LayoutView {
     constructor(onLogout) {
@@ -137,6 +138,14 @@ export class LayoutView {
                 if (q) router.navigate(`/movies?q=${encodeURIComponent(q)}`);
             }, 400);
         });
+
+        // Modal Agregar Película
+        const openAddModal = () => {
+            closeMenu();
+            this._openAddMediaModal();
+        };
+        document.getElementById('btn-add-media')?.addEventListener('click', openAddModal);
+        document.getElementById('btn-side-add-media')?.addEventListener('click', openAddModal);
     }
 
     setActiveNav(route) {
@@ -147,5 +156,85 @@ export class LayoutView {
 
     getContentContainer() {
         return document.getElementById('main-content');
+    }
+
+    _openAddMediaModal() {
+        const genres = mediaController.getGenres();
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 class="modal-title">Añadir Película / Serie</h2>
+                <button class="btn btn-icon close-modal">✕</button>
+            </div>
+            <form class="modal-form" id="user-add-media-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input class="input-field" name="title" required placeholder="Ej: Matrix">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select class="input-field" name="type">
+                            <option value="movie">🎬 Película</option>
+                            <option value="series">📺 Serie</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Año de estreno *</label>
+                        <input class="input-field" name="release_year" type="number" min="1900" max="2030" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Imagen (Opcional)</label>
+                        <input class="input-field" name="image" type="url" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Géneros</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                        ${genres.map(g => `<label style="display:flex;align-items:center;gap:5px;font-size:0.85rem;cursor:pointer">
+                            <input type="checkbox" name="genre_ids" value="${g.id}"> ${g.name}
+                        </label>`).join('')}
+                    </div>
+                </div>
+                <p class="error-msg" id="add-modal-error"></p>
+                <div style="display:flex;gap:10px;justify-content:flex-end">
+                    <button type="button" class="btn btn-secondary close-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Añadir</button>
+                </div>
+            </form>
+        </div>`;
+
+        document.body.appendChild(overlay);
+        
+        const close = () => overlay.remove();
+        overlay.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', close));
+        overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+        document.getElementById('user-add-media-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const genre_ids = [...e.target.querySelectorAll('[name=genre_ids]:checked')].map(c => parseInt(c.value));
+            const data = {
+                title: fd.get('title'), type: fd.get('type'),
+                release_year: fd.get('release_year'), image: fd.get('image'), genre_ids
+            };
+
+            const result = mediaController.createMedia(data);
+            if (result.error) {
+                document.getElementById('add-modal-error').textContent = result.error;
+            } else {
+                close();
+                showToast('Contenido añadido exitosamente.');
+                const targetRoute = data.type === 'movie' ? '/movies' : '/series';
+                router.navigate(targetRoute);
+                if (router.getCurrentRoute()?.route === targetRoute) {
+                    router.start(); // Refresh current route
+                }
+            }
+        });
     }
 }

@@ -485,6 +485,39 @@ export class DetailView {
             });
         });
 
+        // Watch status buttons
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const st = btn.getAttribute('data-status');
+                const res = mediaController.setWatchStatus(mediaId, st);
+                if (res?.error) {
+                    showToast(res.error, 'error');
+                } else {
+                    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const badge = document.getElementById('detail-status-badge');
+                    if (badge) {
+                        badge.className = `status-current-label status-${st}`;
+                        const labelMap = { 'no_vista': '👁️ No vista', 'en_proceso': '⏳ En proceso', 'vista': '✅ Vista' };
+                        badge.textContent = labelMap[st] || st;
+                    }
+                    showToast(`Estado actualizado: ${btn.textContent.trim()}`);
+                }
+            });
+        });
+
+        // Critique checkbox
+        const critiqueChk = document.getElementById('detail-session-critique-chk');
+        if (critiqueChk) {
+            critiqueChk.addEventListener('change', () => {
+                const formSec = document.getElementById('review-form-section');
+                if (formSec) {
+                    formSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    document.getElementById('review-comment')?.focus();
+                }
+            });
+        }
+
         // Submit review
         document.getElementById('submit-review-btn')?.addEventListener('click', () => {
             const rating  = parseInt(document.getElementById('review-rating').value);
