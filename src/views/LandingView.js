@@ -126,8 +126,9 @@ export class LandingView {
         </div>
         <div class="absolute -right-24 bottom-0 h-[380px] w-[380px] rounded-full bg-[#00E5FF]/20 blur-[130px]" data-kid="2-2-5" data-name="hero blue decorative blur">
         </div>
-        <div class="relative mx-auto grid max-w-[1240px] items-center gap-12 px-6 py-20 lg:grid-cols-[minmax(0,1fr)_320px] lg:py-28" data-kid="2-2-6" data-name="hero content grid layout">
-            <div class="reveal max-w-[660px] rounded-[26px] border border-white/12 bg-white/[0.045] p-8 backdrop-blur-2xl sm:p-11" data-kid="2-2-6-1" data-name="hero main content container">
+        <div class="relative mx-auto grid max-w-[1240px] items-center gap-6 px-6 py-12 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.75fr)] sm:gap-10 sm:py-20 lg:gap-12 lg:py-28" data-kid="2-2-6" data-name="hero layout grid">
+            <!-- ---- LEFT: content card ---- -->
+            <div class="relative z-20 max-w-[660px] rounded-[26px] border border-white/12 bg-white/[0.045] p-8 backdrop-blur-2xl sm:p-11" data-kid="2-2-6-1" data-name="hero content card">
                 <span class="mono inline-flex items-center gap-2 rounded-full border border-[#00E5FF]/35 bg-[#00E5FF]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#00E5FF]" data-kid="2-2-6-1-1" data-name="trending badge">
                     <i class="ti ti-flame text-sm" data-kid="2-2-6-1-1-1" data-name="flame icon">
                     </i>
@@ -173,30 +174,235 @@ export class LandingView {
                     </p>
                 </div>
             </div>
-            <!-- floating "now rating" ticket -->
-            <div class="reveal hidden lg:block" data-kid="2-2-6-2" data-name="floating ticket container">
-                <div class="rotate-[2.5deg] rounded-2xl border border-white/12 bg-[#0A0E16]/85 p-5 backdrop-blur-xl shadow-[0_30px_80px_-30px_rgba(0,0,0,.9)]" data-kid="2-2-6-2-1" data-name="now rating ticket">
-                    <p class="mono text-[10px] uppercase tracking-[0.22em] text-[#FF007F]" data-kid="2-2-6-2-1-1" data-name="ticket status label">
-                        Calificando ahora
-                    </p>
-                    <img alt="Póster de Dune: Parte Dos — Mikhail Nilov on Pexels" class="mt-3 aspect-[2/3] w-full h-full w-full rounded-xl object-cover" data-kid="2-2-6-2-1-2" data-name="ticket poster image" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=500&q=80"/>
-                    <p class="mt-3 text-sm font-bold" data-kid="2-2-6-2-1-3" data-name="ticket movie title">
-                        Dune: Parte Dos
-                    </p>
-                    <div class="mt-1 flex items-center gap-1 text-[#00E5FF]" data-kid="2-2-6-2-1-4" data-name="ticket rating stars container">
-                        <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-4-1" data-name="star icon">
-                        </i>
-                        <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-4-2" data-name="star icon">
-                        </i>
-                        <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-4-3" data-name="star icon">
-                        </i>
-                        <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-4-4" data-name="star icon">
-                        </i>
-                        <i class="ti ti-star-half-filled text-xs" data-kid="2-2-6-2-1-4-5" data-name="half star icon">
-                        </i>
-                        <span class="mono ml-1 text-[11px] text-[#A0B0C0]" data-kid="2-2-6-2-1-4-6" data-name="ticket rating value text">
-                            4.6 / 5
+            <!-- ---- RIGHT: infinite poster wall (desktop / tablet) ---- -->
+            <div class="relative hidden sm:block" data-kid="2-2-6-2" data-name="desktop poster wall container">
+                <div class="cc-wall relative h-[560px] lg:h-[620px] [perspective:1400px]" data-kid="2-2-6-2-1" data-name="poster wall viewport">
+                    <div class="cc-wall-mask absolute -inset-x-8 inset-y-0 flex justify-center gap-3 overflow-hidden [transform:rotateY(-9deg)_rotateZ(-6deg)_scale(1.05)] [transform-style:preserve-3d]" data-kid="2-2-6-2-1-1" data-name="poster column wrapper container">
+                        <!-- column 1 — up -->
+                        <div class="w-[140px] shrink-0 lg:w-[158px]" data-kid="2-2-6-2-1-1-1" data-name="first poster column">
+                            <div class="cc-track cc-up-a" data-kid="2-2-6-2-1-1-1-1" data-name="column animation track">
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-1" data-name="poster card 1 with hover effect">
+                                    <img alt="Póster de Dune: Parte Dos" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-1-1" data-name="poster image" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-1-2" data-name="poster hover ring">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-2">
+                                    <img alt="Póster de Deadpool & Wolverine" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-2-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/38691326/pexels-photo-38691326.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-2-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-3">
+                                    <img alt="Póster de Furiosa" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-3-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-3-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-4">
+                                    <img alt="Póster de Gladiator II" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-4-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/29189099/pexels-photo-29189099.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-4-2">
+                                    </span>
+                                </div>
+                                <!-- loop clone -->
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-5">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-5-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-5-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-6">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-6-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/38691326/pexels-photo-38691326.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-6-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-7">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-7-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-7-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-1-1-8">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-1-1-8-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/29189099/pexels-photo-29189099.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-1-1-8-2">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- column 2 — down -->
+                        <div class="w-[140px] shrink-0 lg:w-[158px]" data-kid="2-2-6-2-1-1-2" data-name="second poster column">
+                            <div class="cc-track cc-down-b" data-kid="2-2-6-2-1-1-2-1" data-name="column animation track">
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-1" data-name="poster card 1 with hover effect">
+                                    <img alt="Póster de Wicked" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-1-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/19830143/pexels-photo-19830143.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-1-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-2" data-name="poster card 2 with hover effect">
+                                    <img alt="Póster de The Last of Us T2" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-2-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/14274429/pexels-photo-14274429.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-2-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-3" data-name="poster card 3 with hover effect">
+                                    <img alt="Póster de Sinners" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-3-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/8108327/pexels-photo-8108327.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-3-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-4" data-name="poster card 4 with hover effect">
+                                    <img alt="Póster de Arcane T2" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-4-1" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1705510144116-cc4d88838b14?auto=format&w=400&q=80&fit=crop"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-4-2">
+                                    </span>
+                                </div>
+                                <!-- loop clone -->
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-5">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-5-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/19830143/pexels-photo-19830143.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-5-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-6">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-6-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/14274429/pexels-photo-14274429.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-6-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-7">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-7-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/8108327/pexels-photo-8108327.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-7-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-2-1-8">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-2-1-8-1" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1705510144116-cc4d88838b14?auto=format&w=400&q=80&fit=crop"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-2-1-8-2">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- column 3 — up (lg only) -->
+                        <div class="hidden w-[140px] shrink-0 lg:block lg:w-[158px]" data-kid="2-2-6-2-1-1-3" data-name="third poster column">
+                            <div class="cc-track cc-up-c" data-kid="2-2-6-2-1-1-3-1" data-name="column animation track">
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-1" data-name="poster card 1 with hover effect">
+                                    <img alt="Póster de Nosferatu" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-1-1" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1637272491022-e96d2a20342e?auto=format&w=400&q=80&fit=crop"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-1-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-2" data-name="poster card 2 with hover effect">
+                                    <img alt="Póster de Furiosa" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-2-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-2-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-3" data-name="poster card 3 with hover effect">
+                                    <img alt="Póster de Dune: Parte Dos" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-3-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-3-2">
+                                    </span>
+                                </div>
+                                <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-4" data-name="poster card 4 with hover effect">
+                                    <img alt="Póster de The Last of Us T2" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-4-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/14274429/pexels-photo-14274429.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-4-2">
+                                    </span>
+                                </div>
+                                <!-- loop clone -->
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-5">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-5-1" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1637272491022-e96d2a20342e?auto=format&w=400&q=80&fit=crop"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-5-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-6">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-6-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-6-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-7">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-7-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-7-2">
+                                    </span>
+                                </div>
+                                <div aria-hidden="true" class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-8">
+                                    <img alt="" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-8-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/14274429/pexels-photo-14274429.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                                    <span class="cc-ring pointer-events-none absolute inset-0 rounded-xl ring-2 ring-[#00E5FF] ring-inset" data-kid="2-2-6-2-1-1-3-1-8-2">
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- edge fades -->
+                    <div class="pointer-events-none absolute inset-y-0 -left-12 w-56 bg-gradient-to-r from-[#05070A] via-[#05070A]/80 to-transparent" data-kid="2-2-6-2-1-2" data-name="left gradient fade">
+                    </div>
+                    <div class="pointer-events-none absolute -inset-x-8 inset-y-0 bg-[radial-gradient(80%_70%_at_62%_48%,transparent_50%,rgba(5,7,10,.5)_100%)]" data-kid="2-2-6-2-1-7" data-name="wall vignette overlay">
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 -top-2 h-24 bg-gradient-to-b from-[#05070A] to-transparent" data-kid="2-2-6-2-1-3" data-name="top gradient fade">
+                    </div>
+                    <div class="pointer-events-none absolute inset-x-0 -bottom-2 h-28 bg-gradient-to-t from-[#05070A] to-transparent" data-kid="2-2-6-2-1-4" data-name="bottom gradient fade">
+                    </div>
+                    <!-- catalog chip -->
+                    <div class="mono pointer-events-none absolute right-2 top-4 z-20 inline-flex items-center gap-2 rounded-full border border-white/12 bg-[#0A0E16]/85 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A0B0C0] backdrop-blur-md" data-kid="2-2-6-2-1-5" data-name="catalog status badge">
+                        <span class="cc-dot h-1.5 w-1.5 rounded-full bg-[#00E5FF]" data-kid="2-2-6-2-1-5-1" data-name="live indicator dot">
                         </span>
+                        89.000 títulos en catálogo
+                    </div>
+                    <!-- floating "calificando ahora" card -->
+                    <div class="absolute -left-10 bottom-6 z-30 w-[228px] rounded-2xl border border-white/12 bg-[#0A0E16]/90 p-4 backdrop-blur-xl shadow-[0_30px_80px_-30px_rgba(0,0,0,.95)]" data-kid="2-2-6-2-1-6" data-name="current rating card">
+                        <p class="mono text-[10px] uppercase tracking-[0.22em] text-[#FF007F]" data-kid="2-2-6-2-1-6-1" data-name="card status label">
+                            Calificando ahora
+                        </p>
+                        <div class="mt-3 flex items-center gap-3" data-kid="2-2-6-2-1-6-2" data-name="card content layout">
+                            <img alt="Póster de Dune: Parte Dos" class="h-[74px] w-[50px] shrink-0 rounded-lg border border-white/10 object-cover" data-kid="2-2-6-2-1-6-2-1" data-name="movie poster thumbnail" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=200&q=80"/>
+                            <div class="min-w-0" data-kid="2-2-6-2-1-6-2-2" data-name="movie info text">
+                                <p class="truncate text-sm font-bold" data-kid="2-2-6-2-1-6-2-2-1" data-name="movie title text">
+                                    Dune: Parte Dos
+                                </p>
+                                <div class="mt-1.5 flex items-center gap-1 text-[#00E5FF]" data-kid="2-2-6-2-1-6-2-2-2" data-name="rating stars container">
+                                    <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-6-2-2-2-1" data-name="star 1 icon">
+                                    </i>
+                                    <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-6-2-2-2-2" data-name="star 2 icon">
+                                    </i>
+                                    <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-6-2-2-2-3" data-name="star 3 icon">
+                                    </i>
+                                    <i class="ti ti-star-filled text-xs" data-kid="2-2-6-2-1-6-2-2-2-4" data-name="star 4 icon">
+                                    </i>
+                                    <i class="ti ti-star-half-filled text-xs" data-kid="2-2-6-2-1-6-2-2-2-5" data-name="half-star icon">
+                                    </i>
+                                    <span class="mono ml-1 text-[11px] text-[#A0B0C0]" data-kid="2-2-6-2-1-6-2-2-2-6" data-name="rating text">
+                                        4.6 / 5
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ---- RIGHT (mobile): horizontal poster rail, never empty ---- -->
+            <div class="cc-rail relative -mx-6 overflow-hidden sm:hidden" data-kid="2-2-6-3" data-name="mobile poster rail container">
+                <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#05070A] to-transparent" data-kid="2-2-6-3-1" data-name="rail left gradient fade">
+                </div>
+                <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#05070A] to-transparent" data-kid="2-2-6-3-2" data-name="rail right gradient fade">
+                </div>
+                <div class="cc-rail-track" data-kid="2-2-6-3-3" data-name="rail animation track">
+                    <div class="flex shrink-0 gap-3 pr-3 pl-6" data-kid="2-2-6-3-3-1" data-name="rail initial set">
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-1-1" data-name="mobile poster card 1 with hover effect">
+                            <img alt="Póster de Dune: Parte Dos" class="h-full w-full object-cover" data-kid="2-2-6-3-3-1-1-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-1-2" data-name="mobile poster card 2 with hover effect">
+                            <img alt="Póster de Deadpool & Wolverine" class="h-full w-full object-cover" data-kid="2-2-6-3-3-1-2-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/38691326/pexels-photo-38691326.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-1-3" data-name="mobile poster card 3 with hover effect">
+                            <img alt="Póster de Furiosa" class="h-full w-full object-cover" data-kid="2-2-6-3-3-1-3-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-1-4" data-name="mobile poster card 4 with hover effect">
+                            <img alt="Póster de Wicked" class="h-full w-full object-cover" data-kid="2-2-6-3-3-1-4-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/19830143/pexels-photo-19830143.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-1-5" data-name="mobile poster card 5 with hover effect">
+                            <img alt="Póster de Sinners" class="h-full w-full object-cover" data-kid="2-2-6-3-3-1-5-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/8108327/pexels-photo-8108327.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                    </div>
+                    <div aria-hidden="true" class="flex shrink-0 gap-3 pr-3" data-kid="2-2-6-3-3-2" data-name="rail loop clone set">
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-2-1">
+                            <img alt="" class="h-full w-full object-cover" data-kid="2-2-6-3-3-2-1-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/7661481/pexels-photo-7661481.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-2-2">
+                            <img alt="" class="h-full w-full object-cover" data-kid="2-2-6-3-3-2-2-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/38691326/pexels-photo-38691326.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-2-3">
+                            <img alt="" class="h-full w-full object-cover" data-kid="2-2-6-3-3-2-3-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/30610666/pexels-photo-30610666.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-2-4">
+                            <img alt="" class="h-full w-full object-cover" data-kid="2-2-6-3-3-2-4-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/19830143/pexels-photo-19830143.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
+                        <div class="cc-p relative h-[168px] w-[112px] shrink-0 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-3-3-2-5">
+                            <img alt="" class="h-full w-full object-cover" data-kid="2-2-6-3-3-2-5-1" decoding="async" loading="lazy" src="https://images.pexels.com/photos/8108327/pexels-photo-8108327.jpeg?auto=compress&cs=tinysrgb&w=400&q=80"/>
+                        </div>
                     </div>
                 </div>
             </div>
