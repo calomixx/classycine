@@ -142,7 +142,7 @@ export class LayoutView {
         // Modal Agregar Película
         const openAddModal = () => {
             closeMenu();
-            this._openAddMediaModal();
+            this._openAddMediaModal().catch(() => showToast('No se pudo conectar con el servidor.', 'error'));
         };
         document.getElementById('btn-add-media')?.addEventListener('click', openAddModal);
         document.getElementById('btn-side-add-media')?.addEventListener('click', openAddModal);
@@ -158,8 +158,8 @@ export class LayoutView {
         return document.getElementById('main-content');
     }
 
-    _openAddMediaModal() {
-        const genres = mediaController.getGenres();
+    async _openAddMediaModal() {
+        const genres = await mediaController.getGenres();
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.innerHTML = `
@@ -214,7 +214,7 @@ export class LayoutView {
         overlay.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', close));
         overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
-        document.getElementById('user-add-media-form').addEventListener('submit', (e) => {
+        document.getElementById('user-add-media-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(e.target);
             const genre_ids = [...e.target.querySelectorAll('[name=genre_ids]:checked')].map(c => parseInt(c.value));
@@ -223,7 +223,7 @@ export class LayoutView {
                 release_year: fd.get('release_year'), image: fd.get('image'), genre_ids
             };
 
-            const result = mediaController.createMedia(data);
+            const result = await mediaController.createMedia(data);
             if (result.error) {
                 document.getElementById('add-modal-error').textContent = result.error;
             } else {

@@ -53,7 +53,7 @@ export function showToast(message, type = 'success') {
     const colors = {
         success: { bg: 'rgba(80,250,123,0.15)', border: 'rgba(80,250,123,0.4)', color: '#50fa7b' },
         error:   { bg: 'rgba(255,85,85,0.15)',  border: 'rgba(255,85,85,0.4)',  color: '#ff5555' },
-        info:    { bg: 'rgba(139,233,253,0.1)', border: 'rgba(139,233,253,0.3)', color: '#8be9fd' },
+        info:    { bg: 'rgba(0,229,255,0.1)', border: 'rgba(0,229,255,0.3)', color: '#00E5FF' },
     };
     const c = colors[type] || colors.info;
     toast.style.background  = c.bg;

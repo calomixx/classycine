@@ -2,83 +2,14 @@
  * LandingView.js
  * 
  * VISTA DE LANDING (MVC - View Layer)
- * Convertido de HTML a Módulo ES6.
+ * Generado fielmente a partir de "Modelo 1 — Neón Cinemático.html"
  */
 
 import { router } from '../Router.js';
 
 export class LandingView {
     render(container) {
-        container.innerHTML = `
-
-  <div id="root"><style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-
-@layer base {
-  .cc-root { font-family: 'Outfit', sans-serif; }
-  .cc-root h1, .cc-root h2, .cc-root h3 { letter-spacing: -0.03em; }
-}
-
-.mono { font-family: 'Space Grotesk', monospace; }
-
-/* ---- marquee ---- */
-@keyframes cc-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(-50%,0,0); } }
-.cc-marquee-track { display: flex; width: max-content; animation: cc-marquee 26s linear infinite; }
-.cc-marquee-slow { animation-duration: 44s; }
-.cc-marquee-rev { animation-direction: reverse; }
-.cc-marquee-wrap:hover .cc-marquee-track { animation-play-state: paused; }
-
-/* ---- neon pulse CTA ---- */
-@keyframes cc-pulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(0,229,255,.55), 0 10px 40px -8px rgba(0,229,255,.6); }
-  50%     { box-shadow: 0 0 0 14px rgba(0,229,255,0), 0 10px 40px -8px rgba(0,229,255,.35); }
-}
-.cc-pulse { animation: cc-pulse 2.6s cubic-bezier(.4,0,.2,1) infinite; }
-
-/* ---- animated gradient border ---- */
-@keyframes cc-shift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-.cc-gborder {
-  background-image: linear-gradient(110deg,#00E5FF,#B000FF,#FF007F,#00E5FF);
-  background-size: 200% 200%;
-  animation: cc-shift 7s linear infinite;
-}
-
-/* ---- scanline / grain overlay ---- */
-.cc-grid-bg {
-  background-image: linear-gradient(rgba(0,229,255,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,.055) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
-
-/* ---- poster hover ---- */
-.cc-poster .cc-poster-veil { opacity: 0; transition: opacity .4s ease, backdrop-filter .4s ease; backdrop-filter: blur(0px); }
-.cc-poster:hover .cc-poster-veil { opacity: 1; backdrop-filter: blur(6px); pointer-events: auto; }
-.cc-poster .cc-poster-img { transition: transform .6s cubic-bezier(.22,1,.36,1), filter .4s ease; }
-.cc-poster:hover .cc-poster-img { transform: scale(1.07); filter: saturate(1.25) contrast(1.05); }
-.cc-poster .cc-poster-ring { transition: opacity .4s ease; }
-.cc-poster:hover .cc-poster-ring { opacity: 1; }
-
-/* ---- tier tilt ---- */
-.cc-tier-chip { transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
-.cc-tier-chip:hover { transform: translateY(-6px) rotate(-4deg) scale(1.14); box-shadow: 0 12px 28px rgba(0,0,0,.65); z-index: 20; }
-
-/* ---- faq ---- */
-.cc-faq summary::-webkit-details-marker { display: none; }
-.cc-faq summary { list-style: none; cursor: pointer; }
-.cc-faq[open] .cc-faq-plus { transform: rotate(135deg); }
-.cc-faq-plus { transition: transform .22s ease; }
-@keyframes cc-snap { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-.cc-faq[open] .cc-faq-body { animation: cc-snap .18s ease-out both; }
-
-/* ---- reveal (GSAP controlled) ---- */
-.reveal { visibility: hidden; }
-
-/* ---- misc ---- */
-.cc-scroll-x { scrollbar-width: none; }
-.cc-scroll-x::-webkit-scrollbar { display: none; }
-.cc-diag { clip-path: polygon(0 12%, 100% 0, 100% 88%, 0 100%); }
-</style>
-<link data-kid="1" data-name="Tabler Icons CSS stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont/tabler-icons.min.css" rel="stylesheet"/>
-<div class="cc-root bg-[#05070A] text-white antialiased overflow-x-hidden selection:bg-[#FF007F] selection:text-white" data-kid="2" data-name="CineClassify page root container">
+        container.innerHTML = `<div class="cc-root bg-[#05070A] text-white antialiased overflow-x-hidden selection:bg-[#FF007F] selection:text-white" data-kid="2" data-name="CineClassify page root container">
     <!-- ============ NAVBAR ============ -->
     <header class="sticky top-0 z-50 border-b border-white/10 bg-[#05070A]/70 backdrop-blur-xl" data-kid="2-1" data-name="sticky navigation bar">
         <div class="mx-auto flex max-w-[1240px] items-center gap-8 px-6 py-4" data-kid="2-1-1" data-name="navbar layout container">
@@ -88,7 +19,7 @@ export class LandingView {
                     Classify
                 </span>
             </a>
-            <nav class="mono hidden items-center gap-7 text-[13px] font-medium uppercase tracking-[0.14em] text-[#A0B0C0] lg:flex" data-kid="2-1-1-2" data-name="main navigation menu">
+            <nav class="mono cc-show-lg-flex items-center gap-7 text-[13px] font-medium uppercase tracking-[0.14em] text-[#A0B0C0]" data-kid="2-1-1-2" data-name="main navigation menu">
                 <a class="relative py-1 text-white" data-kid="2-1-1-2-1" data-name="active nav link" href="#inicio">
                     Inicio
                     <span class="absolute -bottom-0.5 left-0 h-px w-full bg-[#00E5FF]" data-kid="2-1-1-2-1-1" data-name="active nav link indicator">
@@ -175,7 +106,7 @@ export class LandingView {
                 </div>
             </div>
             <!-- ---- RIGHT: infinite poster wall (desktop / tablet) ---- -->
-            <div class="relative hidden sm:block" data-kid="2-2-6-2" data-name="desktop poster wall container">
+            <div class="cc-show-sm relative" data-kid="2-2-6-2" data-name="desktop poster wall container">
                 <div class="cc-wall relative h-[560px] lg:h-[620px] [perspective:1400px]" data-kid="2-2-6-2-1" data-name="poster wall viewport">
                     <div class="cc-wall-mask absolute -inset-x-8 inset-y-0 flex justify-center gap-3 overflow-hidden [transform:rotateY(-9deg)_rotateZ(-6deg)_scale(1.05)] [transform-style:preserve-3d]" data-kid="2-2-6-2-1-1" data-name="poster column wrapper container">
                         <!-- column 1 — up -->
@@ -271,7 +202,7 @@ export class LandingView {
                             </div>
                         </div>
                         <!-- column 3 — up (lg only) -->
-                        <div class="hidden w-[140px] shrink-0 lg:block lg:w-[158px]" data-kid="2-2-6-2-1-1-3" data-name="third poster column">
+                        <div class="cc-show-lg w-[140px] shrink-0 lg:w-[158px]" data-kid="2-2-6-2-1-1-3" data-name="third poster column">
                             <div class="cc-track cc-up-c" data-kid="2-2-6-2-1-1-3-1" data-name="column animation track">
                                 <div class="cc-p relative mb-3.5 overflow-hidden rounded-xl border border-white/10" data-kid="2-2-6-2-1-1-3-1-1" data-name="poster card 1 with hover effect">
                                     <img alt="Póster de Nosferatu" class="aspect-[2/3] w-full object-cover" data-kid="2-2-6-2-1-1-3-1-1-1" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1637272491022-e96d2a20342e?auto=format&w=400&q=80&fit=crop"/>
@@ -1747,40 +1678,21 @@ export class LandingView {
             CINECLASSIFY
         </p>
     </footer>
-</div>
+</div>`;
 
-
-
-</div>
-
-        `;
-
-        this._loadDependencies(() => {
-            this._initAnimations();
-        });
-
+        this._initAnimations();
         this._bindEvents();
     }
 
-    _loadDependencies(callback) {
-        // Load GSAP dynamically if not present
-        if (!window.gsap) {
-            const script1 = document.createElement('script');
-            script1.src = 'https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js';
-            script1.onload = () => {
-                const script2 = document.createElement('script');
-                script2.src = 'https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js';
-                script2.onload = callback;
-                document.body.appendChild(script2);
-            };
-            document.body.appendChild(script1);
-        } else {
-            callback();
-        }
-    }
-
     _initAnimations() {
-        if (!window.gsap || !window.ScrollTrigger) return;
+        if (!window.gsap || !window.ScrollTrigger) {
+            // Fallback en caso de que GSAP no esté cargado
+            document.querySelectorAll('.reveal').forEach(el => {
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+            });
+            return;
+        }
         gsap.registerPlugin(ScrollTrigger);
 
         gsap.utils.toArray('.reveal').forEach((el) => {
@@ -1806,10 +1718,10 @@ export class LandingView {
             { selector: '[data-name="register button"]', route: '/register' },
             { selector: '[data-name="explore now call-to-action button"]', route: '/register' },
             { selector: '[data-name="view catalog button"]', route: '/login' },
-            { selector: '[data-name="start classifying button"]', route: '/register' },
-            { selector: '[data-name="try pro button"]', route: '/register' },
             { selector: '[data-name="create account button"]', route: '/register' },
-            { selector: '[data-name="final cta button"]', route: '/register' }
+            { selector: '[data-name="cta button"]', route: '/tierlist' },
+            { selector: '[data-name="signup button"]', route: '/register' },
+            { selector: '[data-name="signin button"]', route: '/login' }
         ];
 
         routeBtns.forEach(({ selector, route }) => {
@@ -1820,6 +1732,49 @@ export class LandingView {
                 });
             });
         });
+
+        // "Calificar ahora" buttons sin data-name dentro de los posters del catálogo
+        document.querySelectorAll('.cc-poster .cc-poster-veil button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                router.navigate('/login');
+            });
+        });
+
+        // Logo → volver al inicio
+        document.querySelectorAll('[data-name="site logo link"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Footer: links internos a rutas autenticadas
+        const footerRouteLinks = [
+            { text: 'Tier Lists', route: '/tierlist' },
+            { text: 'Estadísticas', route: '/stats' }
+        ];
+        document.querySelectorAll('.cc-root footer a[href="#"]').forEach(a => {
+            const match = footerRouteLinks.find(r => a.textContent.trim() === r.text);
+            if (match) {
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    router.navigate(match.route);
+                });
+            }
+        });
+
+        // Contact form → toast de confirmación
+        const contactForm = document.querySelector('[data-name="contact form"]');
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                import('../helpers.js').then(({ showToast }) => {
+                    showToast('¡Mensaje enviado! Te responderemos pronto.');
+                    contactForm.reset();
+                });
+            });
+        }
 
         // Smooth scroll for nav links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

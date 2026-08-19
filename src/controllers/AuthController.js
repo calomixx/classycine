@@ -1,97 +1,84 @@
 /**
  * AuthController.js
- * 
+ *
  * CONTROLADOR DE AUTENTICACIÓN (MVC - Controller Layer)
- * Gestiona: Login, Registro, Sesión JWT simulada, Roles.
- * 
- * JWT simulado: header.payload.signature usando btoa/atob.
+ * Gestiona: Login, Registro, Sesión por token, Roles.
+ *
+ * La verificación de credenciales ocurre en el SERVIDOR (SQLite).
+ * En el navegador solo se conserva { token, user } (como una cookie).
  */
 
 import { db } from '../db/database.js';
 
-const JWT_SECRET = 'cineclassify_jwt_secret_2024';
+const SESSION_KEY = 'auth_session';
 
-// =====================================================
-// JWT UTILITIES (Simulado con btoa/atob)
-// =====================================================
-function signToken(payload) {
-    const header  = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const body    = btoa(JSON.stringify({ ...payload, exp: Date.now() + 86400000 })); // 24h
-    const signature = btoa(`${header}.${body}.${JWT_SECRET}`);
-    return `${header}.${body}.${signature}`;
-}
-
-function verifyToken(token) {
-    try {
-        if (!token) return null;
-        const parts = token.split('.');
-        if (parts.length !== 3) return null;
-        const payload = JSON.parse(atob(parts[1]));
-        if (payload.exp < Date.now()) return null; // Expirado
-        return payload;
-    } catch {
-        return null;
-    }
-}
-
-// =====================================================
-// CLASE AuthController
-// =====================================================
 export class AuthController {
     constructor() {
         this._session = null;
+        this._token = null;
         this._loadSession();
     }
 
-    // Cargar sesión desde localStorage
+    // Cargar sesión cacheada desde localStorage
     _loadSession() {
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-            const payload = verifyToken(token);
-            if (payload) {
-                this._session = payload;
-            } else {
-                this.logout(); // Token expirado
+        try {
+            const raw = localStorage.getItem(SESSION_KEY);
+            if (raw) {
+                const { token, user } = JSON.parse(raw);
+                if (token && user) {
+                    this._token = token;
+                    this._session = user;
+                } else {
+                    this.logout();
+                }
             }
+        } catch {
+            this.logout();
         }
     }
 
-    // Registrar usuario
-    register(username, email, password) {
-        // Validación de entradas
+    _persist(token, user) {
+        this._token = token;
+        this._session = user;
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ token, user }));
+    }
+
+    // Validar la sesión contra el servidor (al arrancar la app)
+    async validateSession() {
+        if (!this.isAuthenticated()) return true;
+        const r = await db.getMe();
+        if (r.error) return false;
+        return true;
+    }
+
+    // Registrar usuario (async: el servidor valida y hashea)
+    async register(username, email, password) {
         if (!username || username.length < 3) return { error: 'El usuario debe tener al menos 3 caracteres.' };
         if (!email || !email.includes('@')) return { error: 'Email inválido.' };
         if (!password || password.length < 4) return { error: 'La contraseña debe tener al menos 4 caracteres.' };
 
-        const hash = db._simpleHash(password);
-        const result = db.createUser({ username, email, password_hash: hash, role: 'user' });
+        const result = await db.register({ username, email, password });
         if (result.error) return result;
-
-        // Auto-login tras registro
-        return this.login(username, password);
+        this._persist(result.data.token, result.data.user);
+        return result;
     }
 
-    // Iniciar sesión
-    login(username, password) {
+    // Iniciar sesión (async)
+    async login(username, password) {
         if (!username || !password) return { error: 'Completa todos los campos.' };
 
-        const user = db.findUserByUsername(username);
-        if (!user) return { error: 'Usuario no encontrado.' };
-        if (!db.verifyPassword(password, user.password_hash)) return { error: 'Contraseña incorrecta.' };
-
-        const payload = { id: user.id, username: user.username, role: user.role };
-        const token = signToken(payload);
-
-        localStorage.setItem('auth_token', token);
-        this._session = payload;
-
-        return { data: { user: payload, token } };
+        const result = await db.login({ username, password });
+        if (result.error) return result;
+        this._persist(result.data.token, result.data.user);
+        return result;
     }
 
     // Cerrar sesión
     logout() {
-        localStorage.removeItem('auth_token');
+        if (this._token) db.logout(this._token);
+        this._token = null;
         this._session = null;
+        localStorage.removeItem(SESSION_KEY);
     }
 
     // Obtener sesión actual
@@ -101,7 +88,7 @@ export class AuthController {
     getUserId() { return this._session?.id || null; }
 
     // Middleware: requiere autenticación
-    requireAuth(callback) {
+    async requireAuth(callback) {
         if (!this.isAuthenticated()) {
             return { error: 'Debes iniciar sesión para realizar esta acción.', redirect: 'login' };
         }
@@ -109,7 +96,7 @@ export class AuthController {
     }
 
     // Middleware: requiere rol admin
-    requireAdmin(callback) {
+    async requireAdmin(callback) {
         if (!this.isAdmin()) {
             return { error: 'No tienes permisos para realizar esta acción.', code: 403 };
         }

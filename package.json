@@ -4,6 +4,7 @@
   "description": "Plataforma profesional para clasificar, valorar, guardar y comentar películas y series.",
   "type": "module",
   "scripts": {
-    "start": "npx http-server -p 3000"
+    "start": "node --experimental-sqlite server.js",
+    "serve:static": "npx http-server -p 3000"
   }
 }
