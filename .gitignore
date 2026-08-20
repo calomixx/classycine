@@ -1,0 +1,10 @@
+# Base de datos local (generada por server.js al arrancar)
+data/
+
+# Sistema / editor
+Thumbs.db
+.DS_Store
+*.log
+
+# Dependencias (si algún día se instalan)
+node_modules/

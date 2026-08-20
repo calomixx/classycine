@@ -13,12 +13,11 @@ import { showToast, renderStars, renderGenreBadges, posterHTML, formatDate, conf
 // =====================================================
 // MEDIA CARD HTML
 // =====================================================
-function mediaCardHTML(media) {
+function mediaCardHTML(media, ui = {}) {
     const avg = media.average_rating > 0 ? media.average_rating.toFixed(1) : null;
-    const isFav = mediaController.isInWatchlist(media.id);
-    const watchStatus = mediaController.getWatchStatus(media.id);
-    const userRev = mediaController.getUserReview(media.id);
-    const hasReviewed = !!userRev;
+    const isFav = !!ui.isFav;
+    const watchStatus = ui.watchStatus || 'no_vista';
+    const hasReviewed = !!ui.hasReviewed;
 
     return `
     <article class="media-card" data-id="${media.id}" title="${media.title}">
@@ -53,10 +52,10 @@ function mediaCardHTML(media) {
 
 function bindCardClicks(container) {
     container.querySelectorAll('.card-fav-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             e.stopPropagation();
             const id = btn.getAttribute('data-id');
-            const res = mediaController.toggleWatchlist(id);
+            const res = await mediaController.toggleWatchlist(id);
             if (res.error) {
                 showToast(res.error, 'error');
             } else {
@@ -70,11 +69,11 @@ function bindCardClicks(container) {
     });
 
     container.querySelectorAll('.card-status-select').forEach(sel => {
-        sel.addEventListener('change', e => {
+        sel.addEventListener('change', async (e) => {
             e.stopPropagation();
             const id = sel.getAttribute('data-id');
             const st = sel.value;
-            const res = mediaController.setWatchStatus(id, st);
+            const res = await mediaController.setWatchStatus(id, st);
             if (res?.error) {
                 showToast(res.error, 'error');
             } else {
@@ -96,12 +95,41 @@ function bindCardClicks(container) {
 }
 
 // =====================================================
+// UTILIDADES DE RENDERIZADO ASYNC
+// =====================================================
+const EMPTY_UI = Object.freeze({ favs: new Set(), statuses: {}, reviews: {} });
+
+// Estado del usuario de la sesión (favoritos, estado y reseñas) en un solo fetch
+async function loadUserUI() {
+    if (!authController.isAuthenticated()) return EMPTY_UI;
+    const ui = await mediaController.getUserMediaUI();
+    return {
+        favs: new Set(ui.watchlistIds || []),
+        statuses: ui.statuses || {},
+        reviews: ui.reviews || {}
+    };
+}
+
+function cardUI(userUI, mediaId) {
+    return {
+        isFav: userUI.favs.has(mediaId),
+        watchStatus: userUI.statuses[mediaId] || 'no_vista',
+        hasReviewed: !!userUI.reviews[mediaId]
+    };
+}
+
+// =====================================================
 // HOME VIEW
 // =====================================================
 export class HomeView {
-    render(container) {
-        const { movies: topMovies, series: topSeries } = mediaController.getTopRated();
-        const allMedia = mediaController.getCatalog({ sort: 'reviews', limit: 8 }).data;
+    async render(container) {
+        const [top, catalog, userUI] = await Promise.all([
+            mediaController.getTopRated(),
+            mediaController.getCatalog({ sort: 'reviews', limit: 8 }),
+            loadUserUI()
+        ]);
+        const { movies: topMovies, series: topSeries } = top;
+        const allMedia = catalog.data || [];
 
         container.innerHTML = `
         <div>
@@ -124,7 +152,7 @@ export class HomeView {
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/top'">Ver todo</button>
             </div>
             <div class="media-grid" id="top-movies-grid">
-                ${topMovies.slice(0,6).map(m => mediaCardHTML(m)).join('')}
+                ${topMovies.slice(0,6).map(m => mediaCardHTML(m, cardUI(userUI, m.id))).join('')}
             </div>` : ''}
 
             <!-- TOP SERIES -->
@@ -134,7 +162,7 @@ export class HomeView {
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/top'">Ver todo</button>
             </div>
             <div class="media-grid">
-                ${topSeries.slice(0,6).map(m => mediaCardHTML(m)).join('')}
+                ${topSeries.slice(0,6).map(m => mediaCardHTML(m, cardUI(userUI, m.id))).join('')}
             </div>` : ''}
 
             <!-- RECIENTES -->
@@ -143,7 +171,7 @@ export class HomeView {
                 <button class="btn btn-secondary btn-sm" onclick="window.location.hash='/movies'">Ver catálogo</button>
             </div>
             <div class="media-grid">
-                ${allMedia.map(m => mediaCardHTML(m)).join('')}
+                ${allMedia.map(m => mediaCardHTML(m, cardUI(userUI, m.id))).join('')}
             </div>
         </div>`;
 
@@ -161,11 +189,11 @@ export class CatalogView {
         this._params = {};
     }
 
-    render(container, extraParams = {}) {
+    async render(container, extraParams = {}) {
         this._container = container;
         this._params = { type: this._type, page: 1, limit: 18, ...extraParams };
 
-        const genres = mediaController.getGenres();
+        const genres = await mediaController.getGenres();
         const typeLabel = this._type === 'movie' ? 'Películas' : this._type === 'series' ? 'Series' : 'Catálogo';
 
         container.innerHTML = `
@@ -211,20 +239,23 @@ export class CatalogView {
         this._bindFilters(container);
     }
 
-    _loadResults(params = {}) {
+    async _loadResults(params = {}) {
         const merged = { ...this._params, ...params };
-        const result = mediaController.getCatalog(merged);
+        const [result, userUI] = await Promise.all([
+            mediaController.getCatalog(merged),
+            loadUserUI()
+        ]);
 
         const grid = document.getElementById('catalog-results');
         if (!grid) return;
 
-        if (result.data.length === 0) {
+        if (!result.data || result.data.length === 0) {
             grid.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-3)">
                 <div style="font-size:3rem">🎬</div>
                 <p style="margin-top:1rem">No se encontraron resultados.</p>
             </div>`;
         } else {
-            grid.innerHTML = `<div class="media-grid">${result.data.map(m => mediaCardHTML(m)).join('')}</div>`;
+            grid.innerHTML = `<div class="media-grid">${result.data.map(m => mediaCardHTML(m, cardUI(userUI, m.id))).join('')}</div>`;
         }
 
         this._renderPagination(result);
@@ -284,8 +315,8 @@ export class CatalogView {
 // TOP RATED VIEW
 // =====================================================
 export class TopRatedView {
-    render(container) {
-        const { movies, series } = mediaController.getTopRated();
+    async render(container) {
+        const { movies, series } = await mediaController.getTopRated();
 
         const rankClass = i => i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
 
@@ -330,14 +361,17 @@ export class TopRatedView {
 // DETAIL VIEW (Película/Serie individual)
 // =====================================================
 export class DetailView {
-    render(container, mediaId) {
-        const result = mediaController.getMediaById(mediaId);
+    async render(container, mediaId) {
+        const isAuth = authController.isAuthenticated();
+        const [result, userUI] = await Promise.all([
+            mediaController.getMediaById(mediaId),
+            isAuth ? loadUserUI() : Promise.resolve(EMPTY_UI)
+        ]);
         if (result.error) { container.innerHTML = `<p class="error-msg">${result.error}</p>`; return; }
 
         const media = result.data;
-        const userReview = mediaController.getUserReview(mediaId);
-        const watchStatus = mediaController.getWatchStatus(mediaId);
-        const isAuth = authController.isAuthenticated();
+        const userReview = userUI.reviews[mediaId] || null;
+        const watchStatus = userUI.statuses[mediaId] || 'no_vista';
         const hasReviewed = !!userReview;
         const avg = media.average_rating?.toFixed(1) || '0.0';
 
@@ -487,9 +521,9 @@ export class DetailView {
 
         // Watch status buttons
         document.querySelectorAll('.status-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const st = btn.getAttribute('data-status');
-                const res = mediaController.setWatchStatus(mediaId, st);
+                const res = await mediaController.setWatchStatus(mediaId, st);
                 if (res?.error) {
                     showToast(res.error, 'error');
                 } else {
@@ -519,19 +553,20 @@ export class DetailView {
         }
 
         // Submit review
-        document.getElementById('submit-review-btn')?.addEventListener('click', () => {
+        document.getElementById('submit-review-btn')?.addEventListener('click', async () => {
             const rating  = parseInt(document.getElementById('review-rating').value);
             const comment = document.getElementById('review-comment').value;
 
             if (!rating) { showToast('Selecciona una puntuación.', 'error'); return; }
 
-            const result = mediaController.submitReview(mediaId, rating, comment);
+            const result = await mediaController.submitReview(mediaId, rating, comment);
             if (result.error) {
                 showToast(result.error, 'error');
             } else {
                 showToast('¡Reseña publicada!');
                 // Refrescar reseñas
-                const mediaResult = mediaController.getMediaById(mediaId);
+                const mediaResult = await mediaController.getMediaById(mediaId);
+                if (mediaResult.error) return;
                 const list = document.getElementById('reviews-list');
                 if (list) list.innerHTML = this._renderReviewsList(mediaResult.data.reviews);
                 // Actualizar puntuación visible
@@ -553,8 +588,8 @@ export class DetailView {
 // STATS VIEW
 // =====================================================
 export class StatsView {
-    render(container) {
-        const stats = mediaController.getStatistics();
+    async render(container) {
+        const stats = await mediaController.getStatistics();
 
         container.innerHTML = `
         <div>
@@ -617,8 +652,11 @@ export class StatsView {
 // WATCHLIST VIEW (Mi Lista)
 // =====================================================
 export class WatchlistView {
-    render(container) {
-        const list = mediaController.getWatchlist();
+    async render(container) {
+        const [list, userUI] = await Promise.all([
+            mediaController.getWatchlist(),
+            loadUserUI()
+        ]);
         container.innerHTML = `
         <div>
             <div class="section-header">
@@ -627,7 +665,7 @@ export class WatchlistView {
             </div>
             ${list.length > 0 ? `
                 <div class="media-grid">
-                    ${list.map(m => mediaCardHTML(m)).join('')}
+                    ${list.map(m => mediaCardHTML(m, cardUI(userUI, m.id))).join('')}
                 </div>
             ` : `
                 <div style="text-align:center;padding:4rem 1rem;color:var(--text-3)">
@@ -646,9 +684,12 @@ export class WatchlistView {
 // TIER LIST VIEW (Drag & Drop con SortableJS CDN)
 // =====================================================
 export class TierListView {
-    render(container) {
-        const allMedia = mediaController.getCatalog({ limit: 100 }).data;
-        const tierStates = mediaController.getTierStates();
+    async render(container) {
+        const [catalog, tierStates] = await Promise.all([
+            mediaController.getCatalog({ limit: 100 }),
+            mediaController.getTierStates()
+        ]);
+        const allMedia = catalog.data || [];
 
         // Agrupar por tier
         const tiers = { S: [], A: [], B: [], C: [], D: [], pool: [] };
@@ -732,7 +773,9 @@ export class TierListView {
                 onEnd: (evt) => {
                     const mediaId = evt.item.getAttribute('data-id');
                     const newTier = evt.to.id.replace('tier-', ''); // 'S', 'A', etc. or 'pool'
-                    mediaController.saveTierState(mediaId, newTier);
+                    mediaController.saveTierState(mediaId, newTier).then(res => {
+                        if (res?.error) showToast(res.error, 'error');
+                    });
                 }
             });
         });
@@ -747,14 +790,16 @@ export class AdminView {
         this._mode = mode;
     }
 
-    render(container) {
-        if (this._mode === 'media') this._renderMediaAdmin(container);
-        else this._renderUsersAdmin(container);
+    async render(container) {
+        if (this._mode === 'media') await this._renderMediaAdmin(container);
+        else await this._renderUsersAdmin(container);
     }
 
-    _renderMediaAdmin(container) {
-        const result = mediaController.getCatalog({ limit: 100 });
-        const genres  = mediaController.getGenres();
+    async _renderMediaAdmin(container) {
+        const [result, genres] = await Promise.all([
+            mediaController.getCatalog({ limit: 100 }),
+            mediaController.getGenres()
+        ]);
 
         container.innerHTML = `
         <div>
@@ -791,17 +836,17 @@ export class AdminView {
 
         document.getElementById('add-media-btn')?.addEventListener('click', () => this._openModal(null, genres, container));
         container.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const media = mediaController.getMediaById(btn.getAttribute('data-id'))?.data;
+            btn.addEventListener('click', async () => {
+                const media = (await mediaController.getMediaById(btn.getAttribute('data-id')))?.data;
                 if (media) this._openModal(media, genres, container);
             });
         });
         container.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 if (confirmAction('¿Seguro que deseas eliminar este contenido? Esta acción no se puede deshacer.')) {
-                    mediaController.deleteMedia(btn.getAttribute('data-id'));
+                    await mediaController.deleteMedia(btn.getAttribute('data-id'));
                     showToast('Contenido eliminado.');
-                    this._renderMediaAdmin(container);
+                    await this._renderMediaAdmin(container);
                 }
             });
         });
@@ -885,7 +930,7 @@ export class AdminView {
         overlay.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', () => overlay.remove()));
         overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 
-        document.getElementById('media-modal-form').addEventListener('submit', (e) => {
+        document.getElementById('media-modal-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fd = new FormData(e.target);
             const genre_ids = [...e.target.querySelectorAll('[name=genre_ids]:checked')].map(c => parseInt(c.value));
@@ -897,16 +942,16 @@ export class AdminView {
                 image: fd.get('image'), genre_ids
             };
 
-            const result = isEdit ? mediaController.updateMedia(media.id, data) : mediaController.createMedia(data);
+            const result = isEdit ? await mediaController.updateMedia(media.id, data) : await mediaController.createMedia(data);
             if (result.error) { document.getElementById('modal-error').textContent = result.error; return; }
             overlay.remove();
             showToast(isEdit ? 'Contenido actualizado.' : 'Contenido creado correctamente.');
-            this._renderMediaAdmin(container);
+            await this._renderMediaAdmin(container);
         });
     }
 
-    _renderUsersAdmin(container) {
-        const result = mediaController.getAllUsers();
+    async _renderUsersAdmin(container) {
+        const result = await mediaController.getAllUsers();
         if (result.error) { container.innerHTML = `<p class="error-msg">${result.error}</p>`; return; }
 
         const currentId = authController.getUserId();
@@ -942,19 +987,19 @@ export class AdminView {
         </div>`;
 
         container.querySelectorAll('.toggle-role-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 const newRole = btn.getAttribute('data-role') === 'admin' ? 'user' : 'admin';
-                mediaController.updateUserRole(btn.getAttribute('data-id'), newRole);
+                await mediaController.updateUserRole(btn.getAttribute('data-id'), newRole);
                 showToast('Rol actualizado.');
-                this._renderUsersAdmin(container);
+                await this._renderUsersAdmin(container);
             });
         });
         container.querySelectorAll('.delete-user-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 if (confirmAction('¿Eliminar este usuario?')) {
-                    mediaController.deleteUser(btn.getAttribute('data-id'));
+                    await mediaController.deleteUser(btn.getAttribute('data-id'));
                     showToast('Usuario eliminado.');
-                    this._renderUsersAdmin(container);
+                    await this._renderUsersAdmin(container);
                 }
             });
         });

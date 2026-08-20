@@ -8,9 +8,13 @@ import { LayoutView } from './views/LayoutView.js';
 import { LandingView } from './views/LandingView.js';
 import { HomeView, CatalogView, DetailView, StatsView, TierListView, WatchlistView, AdminView, TopRatedView } from './views/Views.js';
 
-function initApp() {
+async function initApp() {
     const root = document.getElementById('root');
     const landingView = new LandingView();
+
+    // Validar la sesión contra el servidor (token aún vigente)
+    const valid = await authController.validateSession();
+    if (!valid) authController.logout();
 
     const renderLanding = () => {
         landingView.render(root);
@@ -65,7 +69,7 @@ function initApp() {
             } else {
                 renderMain();
                 const container = layoutViewInstance.getContentContainer();
-                callback(container, ...args);
+                Promise.resolve(callback(container, ...args)).catch(err => console.error(err));
             }
         };
     };

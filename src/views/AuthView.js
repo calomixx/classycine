@@ -7,6 +7,7 @@
 
 import { authController } from '../controllers/AuthController.js';
 import { showToast } from '../helpers.js';
+import { router } from '../Router.js';
 
 export class AuthView {
     constructor(onLogin) {
@@ -16,7 +17,7 @@ export class AuthView {
     render(container) {
         container.innerHTML = `
         <div id="auth-view">
-            <div class="auth-card glass">
+            <div class="auth-card">
                 <div class="auth-logo">
                     <h1>Cine<span class="highlight">Classify</span></h1>
                     <p>Tu plataforma personal de cine y series</p>
@@ -38,9 +39,9 @@ export class AuthView {
                         <input class="input-field" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
                     </div>
                     <p class="error-msg" id="login-error"></p>
-                    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:4px">Entrar</button>
-                    <p style="text-align:center; font-size:0.82rem; color:var(--text-3); margin-top:6px">
-                        Demo: usuario <strong style="color:var(--accent)">admin</strong> / contraseña <strong style="color:var(--accent)">admin123</strong>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    <p class="auth-demo">
+                        Demo: usuario <strong>admin</strong> / contraseña <strong>admin123</strong>
                     </p>
                 </form>
 
@@ -59,8 +60,12 @@ export class AuthView {
                         <input class="input-field" type="password" id="reg-pass" placeholder="Mínimo 4 caracteres">
                     </div>
                     <p class="error-msg" id="reg-error"></p>
-                    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:4px">Crear cuenta</button>
+                    <button type="submit" class="btn btn-primary">Crear cuenta</button>
                 </form>
+
+                <p style="text-align:center; margin-top:1.25rem; font-family:'Space Grotesk',monospace; font-size:0.78rem; color:#A0B0C0;">
+                    <a href="#" id="auth-back-link" style="color:var(--neon-cyan); font-weight:600; text-decoration:none;">← Volver al inicio</a>
+                </p>
             </div>
         </div>`;
 
@@ -73,6 +78,11 @@ export class AuthView {
         const loginForm   = document.getElementById('login-form');
         const regForm     = document.getElementById('register-form');
 
+        document.getElementById('auth-back-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            router.navigate('/');
+        });
+
         tabLogin.addEventListener('click', () => {
             tabLogin.classList.add('active'); tabRegister.classList.remove('active');
             loginForm.classList.remove('hidden'); regForm.classList.add('hidden');
@@ -82,11 +92,11 @@ export class AuthView {
             regForm.classList.remove('hidden'); loginForm.classList.add('hidden');
         });
 
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user  = document.getElementById('login-user').value.trim();
             const pass  = document.getElementById('login-pass').value;
-            const result = authController.login(user, pass);
+            const result = await authController.login(user, pass);
             if (result.error) {
                 document.getElementById('login-error').textContent = result.error;
             } else {
@@ -94,12 +104,12 @@ export class AuthView {
             }
         });
 
-        regForm.addEventListener('submit', (e) => {
+        regForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const user  = document.getElementById('reg-user').value.trim();
             const email = document.getElementById('reg-email').value.trim();
             const pass  = document.getElementById('reg-pass').value;
-            const result = authController.register(user, email, pass);
+            const result = await authController.register(user, email, pass);
             if (result.error) {
                 document.getElementById('reg-error').textContent = result.error;
             } else {
