@@ -16,6 +16,7 @@ const BASE = '/api';
 export class Database {
     constructor() {
         this._genres = null;
+        this._userListsPromise = null;
     }
 
     // Token de sesión (el único dato que permanece en el navegador)
@@ -53,14 +54,17 @@ export class Database {
     // AUTENTICACIÓN
     // =====================================================
     async login({ username, password }) {
+        this._userListsPromise = null;
         return this._request('POST', '/auth/login', { username, password });
     }
 
     async register({ username, email, password }) {
+        this._userListsPromise = null;
         return this._request('POST', '/auth/register', { username, email, password });
     }
 
     async logout(token) {
+        this._userListsPromise = null;
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
         await fetch(BASE + '/auth/logout', { method: 'POST', headers }).catch(() => {});
@@ -157,6 +161,7 @@ export class Database {
     // REVIEWS
     // =====================================================
     async createOrUpdateReview({ media_id, rating, comment }) {
+        this._userListsPromise = null;
         return this._request('POST', '/reviews', { media_id, rating, comment });
     }
 
@@ -169,6 +174,7 @@ export class Database {
     // TIER LIST
     // =====================================================
     async saveTierState(user_id, media_id, tier) {
+        this._userListsPromise = null;
         return this._request('POST', '/tier', { media_id, tier });
     }
 
@@ -181,6 +187,7 @@ export class Database {
     // WATCHLIST / ESTADO DE VISUALIZACIÓN
     // =====================================================
     async toggleWatchlist(user_id, media_id) {
+        this._userListsPromise = null;
         return this._request('POST', `/watchlist/${encodeURIComponent(media_id)}`);
     }
 
@@ -190,11 +197,15 @@ export class Database {
     }
 
     async isInWatchlist(user_id, media_id) {
-        const r = await this._request('GET', '/me/lists');
+        if (!this._userListsPromise) {
+            this._userListsPromise = this._request('GET', '/me/lists');
+        }
+        const r = await this._userListsPromise;
         return r.error ? false : (r.watchlistIds || []).includes(media_id);
     }
 
     async setWatchStatus(user_id, media_id, status) {
+        this._userListsPromise = null;
         return this._request('POST', `/watch-status/${encodeURIComponent(media_id)}`, { status });
     }
 
@@ -205,7 +216,10 @@ export class Database {
 
     // Estado completo del usuario de la sesión para renderizar tarjetas
     async getUserMediaUI() {
-        const r = await this._request('GET', '/me/lists');
+        if (!this._userListsPromise) {
+            this._userListsPromise = this._request('GET', '/me/lists');
+        }
+        const r = await this._userListsPromise;
         return r.error ? { watchlistIds: [], statuses: {}, reviews: {} } : r;
     }
 }
