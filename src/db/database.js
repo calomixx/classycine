@@ -138,14 +138,12 @@ export class Database {
         return ids.map(id => genres.find(g => g.id === id)?.name).filter(Boolean);
     }
 
-    async getTopMovies() {
+    async getTopRated() {
         const r = await this._request('GET', '/top');
-        return r.error ? [] : (r.movies || []);
-    }
-
-    async getTopSeries() {
-        const r = await this._request('GET', '/top');
-        return r.error ? [] : (r.series || []);
+        return {
+            movies: r.error ? [] : (r.movies || []),
+            series: r.error ? [] : (r.series || [])
+        };
     }
 
     async sp_get_statistics() {
