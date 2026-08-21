@@ -266,11 +266,11 @@ export class CatalogView {
         const el = document.getElementById('catalog-pagination');
         if (!el || totalPages <= 1) { if(el) el.innerHTML = ''; return; }
 
-        let btns = '';
+        const btns = [];
         for (let i = 1; i <= totalPages; i++) {
-            btns += `<button class="page-btn ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            btns.push(`<button class="page-btn ${i === page ? 'active' : ''}" data-page="${i}">${i}</button>`);
         }
-        el.innerHTML = btns;
+        el.innerHTML = btns.join('');
         el.querySelectorAll('.page-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const p = parseInt(btn.getAttribute('data-page'));
