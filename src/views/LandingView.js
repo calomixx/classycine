@@ -2,7 +2,7 @@
  * LandingView.js
  * 
  * VISTA DE LANDING (MVC - View Layer)
- * Generado fielmente a partir de "Modelo 1 — Neón Cinemático.html"
+ * Generado fielmente a partir de "landing-presentacion.html"
  */
 
 import { router } from '../Router.js';
