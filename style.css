@@ -229,7 +229,7 @@ input, textarea, select { font-family: inherit; }
 }
 
 /* ===================================================
-   LANDING PAGE — NEON CINEMATIC (Modelo 1)
+   LANDING PAGE — NEON CINEMATIC (landing-presentacion.html)
    =================================================== */
 @layer base {
   .cc-root { font-family: 'Outfit', sans-serif; }

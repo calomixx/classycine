@@ -1,8 +1,8 @@
 const fs = require('fs');
 
 const files = [
-    "e:\\Nueva carpeta\\classycine\\Modelo 1 — Neón Cinemático.html",
-    "e:\\Nueva carpeta\\classycine\\src\\views\\LandingView.js"
+    "landing-presentacion.html",
+    "src/views/LandingView.js"
 ];
 
 for (const filePath of files) {
