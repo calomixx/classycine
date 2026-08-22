@@ -31,8 +31,7 @@ export class MediaController {
     async getGenres() { return db.getAllGenres(); }
 
     async getTopRated() {
-        const [movies, series] = await Promise.all([db.getTopMovies(), db.getTopSeries()]);
-        return { movies, series };
+        return db.getTopRated();
     }
 
     async getStatistics() { return db.sp_get_statistics(); }
