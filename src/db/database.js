@@ -135,7 +135,11 @@ export class Database {
 
     async getGenreNames(ids = []) {
         const genres = await this.getAllGenres();
-        return ids.map(id => genres.find(g => g.id === id)?.name).filter(Boolean);
+        const genreMap = {};
+        for (let i = 0; i < genres.length; i++) {
+            genreMap[genres[i].id] = genres[i].name;
+        }
+        return ids.map(id => genreMap[id]).filter(Boolean);
     }
 
     async getTopMovies() {
