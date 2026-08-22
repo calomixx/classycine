@@ -119,6 +119,16 @@ function cardUI(userUI, mediaId) {
 }
 
 // =====================================================
+// HERO BACKDROPS (fondos cinematográficos de alta calidad)
+// =====================================================
+const HERO_BACKDROPS = [
+    'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&w=1600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?auto=format&w=1600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&w=1600&q=80&fit=crop',
+    'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?auto=format&w=1600&q=80&fit=crop'
+];
+
+// =====================================================
 // HOME VIEW
 // =====================================================
 export class HomeView {
@@ -130,20 +140,51 @@ export class HomeView {
         ]);
         const { movies: topMovies, series: topSeries } = top;
         const allMedia = catalog.data || [];
+        const heroSlides = HERO_BACKDROPS;
 
         container.innerHTML = `
         <div>
-            <!-- HERO -->
-            <div class="hero-banner" style="background:linear-gradient(135deg,#1a1b2e,#0f1220)">
-                <div class="hero-content">
-                    <h2>🎬 Bienvenido a <span class="highlight">CineClassify</span></h2>
-                    <p>Clasifica, valora y descubre las mejores películas y series. Construye tu Tier List personal.</p>
-                    <div style="display:flex;gap:10px;margin-top:1.25rem;flex-wrap:wrap;">
-                        <button class="btn btn-primary" onclick="window.location.hash='/movies'">Explorar Películas</button>
-                        <button class="btn btn-secondary" onclick="window.location.hash='/tierlist'">📋 Mi Tier List</button>
+            <!-- HERO CARRUSEL -->
+            <section class="hero-carousel" id="hero-carousel" aria-roledescription="carrusel">
+                <div class="hero-slides" id="hero-slides">
+                    ${heroSlides.map((src, i) => `
+                        <div class="hero-slide ${i === 0 ? 'is-active' : ''}"
+                             style="background-image:url('${src}')"
+                             role="img" aria-label="Fondo cinematográfico ${i + 1}"></div>
+                    `).join('')}
+                    <div class="hero-vignette"></div>
+                </div>
+
+                <div class="hero-orb hero-orb--cyan"></div>
+                <div class="hero-orb hero-orb--purple"></div>
+
+                <div class="hero-inner">
+                    <div class="hero-copy">
+                        <span class="hero-eyebrow hero-mono"><i class="ti ti-terminal-2"></i> CineClassify // core.runtime · v2.4.1</span>
+                        <h1 class="hero-title hero-mono">
+                            <span class="hero-kw">INIT:</span> "CineClassify" CORE.<br>
+                            Vínculos de Herencia Cinematográfica Activados.
+                        </h1>
+                        <p class="hero-desc hero-mono">Motor de Herencia Cinematográfica (CMH) instanciado. Este carrusel es una vista unificada que indexa y ordena dinámicamente el material existente (ej. 'Top Películas' objetos) y nuevos nodos agregados, aplicando filtros heredados para descubrir gemas ocultas. Las clases de películas están vinculadas con herencia estricta para una curación superior.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary hero-btn hero-mono" type="button" onclick="window.location.hash='/movies'">
+                                <i class="ti ti-database"></i> CONSULTAR: Catálogo Completo (GET All)
+                            </button>
+                            <button class="btn btn-secondary hero-btn hero-mono" type="button" onclick="window.location.hash='/watchlist'">
+                                <i class="ti ti-list-check"></i> GESTIONAR: Mis Listas (CRUD)
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <button class="hero-nav hero-nav--prev" id="hero-prev" type="button" aria-label="Anterior"><i class="ti ti-chevron-left"></i></button>
+                <button class="hero-nav hero-nav--next" id="hero-next" type="button" aria-label="Siguiente"><i class="ti ti-chevron-right"></i></button>
+
+                <div class="hero-footer">
+                    <div class="hero-datasource hero-mono">FUENTE DE DATOS: /api/movies/curated &amp; /api/movies/recent_nodes_v2.</div>
+                    <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Paginación del carrusel"></div>
+                </div>
+            </section>
 
             <!-- TOP PELÍCULAS -->
             ${topMovies.length > 0 ? `
@@ -176,6 +217,50 @@ export class HomeView {
         </div>`;
 
         bindCardClicks(container);
+        this._initHeroCarousel(container);
+    }
+
+    _initHeroCarousel(container) {
+        const root = container.querySelector('#hero-carousel');
+        if (!root) return;
+        const slides = Array.from(root.querySelectorAll('.hero-slide'));
+        const dotsWrap = root.querySelector('#hero-dots');
+        const prevBtn = root.querySelector('#hero-prev');
+        const nextBtn = root.querySelector('#hero-next');
+        if (!slides.length || !dotsWrap) return;
+
+        let index = 0;
+        let timer = null;
+
+        slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+            dot.type = 'button';
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-label', `Diapositiva ${i + 1}`);
+            dot.addEventListener('click', () => { show(i); restart(); });
+            dotsWrap.appendChild(dot);
+        });
+        const dots = Array.from(dotsWrap.children);
+
+        function show(i) {
+            index = (i + slides.length) % slides.length;
+            slides.forEach((s, k) => s.classList.toggle('is-active', k === index));
+            dots.forEach((d, k) => d.classList.toggle('is-active', k === index));
+        }
+        function nextSlide() { show(index + 1); }
+        function prevSlide() { show(index - 1); }
+        function start() { stop(); timer = setInterval(nextSlide, 5000); }
+        function stop() { if (timer) { clearInterval(timer); timer = null; } }
+        function restart() { start(); }
+
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextSlide(); restart(); });
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevSlide(); restart(); });
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+
+        show(0);
+        start();
     }
 }
 

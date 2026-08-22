@@ -31,7 +31,6 @@ export class LayoutView {
                     <input class="input-field" type="text" id="global-search" placeholder="Buscar por título, actor, director...">
                 </div>
                 <div class="topbar-actions">
-                    <button class="topbar-btn-add" id="btn-add-media">+ Agregar Película</button>
                     <div class="user-menu">
                         <div class="user-avatar">${getInitials(session?.username)}</div>
                         <div>
