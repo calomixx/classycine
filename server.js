@@ -156,11 +156,13 @@ function publicUser(row) {
 // Hash simple (mismo algoritmo que la app original; en producción: bcrypt)
 function simpleHash(password) {
     let hash = 0;
-    for (let i = 0; i < String(password).length; i++) {
-        hash = ((hash << 5) - hash) + String(password).charCodeAt(i);
+    const pwdStr = String(password);
+    const len = pwdStr.length;
+    for (let i = 0; i < len; i++) {
+        hash = ((hash << 5) - hash) + pwdStr.charCodeAt(i);
         hash |= 0;
     }
-    return `$simhash$${Math.abs(hash).toString(16)}$${Buffer.from(String(password)).toString('base64')}`;
+    return `$simhash$${Math.abs(hash).toString(16)}$${Buffer.from(pwdStr).toString('base64')}`;
 }
 
 function getToken(req) {
